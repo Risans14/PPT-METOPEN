@@ -436,35 +436,80 @@
             background: rgba(46, 204, 113, 0.2);
         }
         
-        /* Process Flow */
-        .process-flow {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+        /* Process Modeling - VERSI RAPIH */
+        .modeling-container {
             margin: 40px 0;
         }
         
-        .process-step {
-            background: linear-gradient(135deg, var(--primary), var(--dark));
-            padding: 20px;
+        .modeling-flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin: 40px 0;
+            position: relative;
+        }
+        
+        .modeling-step {
+            background: linear-gradient(135deg, var(--primary), rgba(52, 152, 219, 0.3));
+            padding: 25px 15px;
             border-radius: 10px;
-            width: 170px;
             text-align: center;
             border: 1px solid var(--card-border);
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         
-        .process-step:hover {
+        .modeling-step:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, var(--primary), rgba(52, 152, 219, 0.4));
         }
         
-        .process-step i {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .modeling-step i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
             color: var(--secondary);
+        }
+        
+        .modeling-step h4 {
+            margin: 10px 0;
+            font-size: 1.2rem;
+            color: var(--light);
+        }
+        
+        .modeling-step p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 5px 0;
+        }
+        
+        .arrow-connector {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--secondary), rgba(52, 152, 219, 0.5));
+            z-index: 1;
+        }
+        
+        .arrow-connector::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid var(--secondary);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
         }
         
         /* Evaluation Metrics */
@@ -625,6 +670,26 @@
         @media (max-width: 1024px) {
             h1 { font-size: 2.8rem; }
             h2 { font-size: 2.2rem; }
+            
+            .modeling-flow {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, auto);
+                gap: 20px;
+            }
+            
+            .modeling-step:nth-child(4) {
+                grid-column: 1 / 2;
+                grid-row: 2 / 3;
+            }
+            
+            .modeling-step:nth-child(5) {
+                grid-column: 2 / 3;
+                grid-row: 2 / 3;
+            }
+            
+            .arrow-connector {
+                display: none;
+            }
         }
         
         @media (max-width: 768px) {
@@ -646,8 +711,24 @@
                 grid-template-columns: 1fr;
             }
             
-            .process-flow {
-                flex-direction: column;
+            .modeling-flow {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(5, auto);
+                gap: 15px;
+            }
+            
+            .modeling-step {
+                min-height: 150px;
+            }
+            
+            .modeling-step:nth-child(4) {
+                grid-column: 1 / 2;
+                grid-row: 4 / 5;
+            }
+            
+            .modeling-step:nth-child(5) {
+                grid-column: 1 / 2;
+                grid-row: 5 / 6;
             }
             
             .nav-buttons {
@@ -690,8 +771,13 @@
             .variable-card,
             .crispdm-card,
             .metric-card,
-            .benefit-card {
+            .benefit-card,
+            .modeling-step {
                 padding: 20px;
+            }
+            
+            .modeling-step i {
+                font-size: 2rem;
             }
         }
         
@@ -722,6 +808,7 @@
         .mt-20 { margin-top: 20px; }
         .mt-30 { margin-top: 30px; }
         .mt-40 { margin-top: 40px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -1024,60 +1111,88 @@
         </div>
     </section>
     
-    <!-- Slide 7: Modeling Process -->
+    <!-- Slide 7: Modeling Process - VERSI RAPIH -->
     <section class="container" id="slide7">
         <div class="slide-content">
             <h2>Proses Modeling</h2>
             
-            <div class="process-flow">
-                <div class="process-step fade-in">
-                    <i class="fas fa-database"></i>
-                    <h4>Data Collection</h4>
-                    <p>300 respondents</p>
-                </div>
-                
-                <div class="process-step fade-in">
-                    <i class="fas fa-filter"></i>
-                    <h4>Preprocessing</h4>
-                    <p>Cleaning & transformation</p>
-                </div>
-                
-                <div class="process-step fade-in">
-                    <i class="fas fa-code"></i>
-                    <h4>Python Implementation</h4>
-                    <p>Scikit-learn library</p>
-                </div>
-                
-                <div class="process-step fade-in">
-                    <i class="fas fa-project-diagram"></i>
-                    <h4>Two Separate Models</h4>
-                    <p>Pertamina & Shell</p>
-                </div>
-                
-                <div class="process-step fade-in">
-                    <i class="fas fa-cogs"></i>
-                    <h4>Hyperparameter Tuning</h4>
-                    <p>GridSearchCV</p>
+            <div class="modeling-container">
+                <div class="modeling-flow">
+                    <!-- Arrow Connector -->
+                    <div class="arrow-connector hidden-mobile"></div>
+                    
+                    <!-- Step 1 -->
+                    <div class="modeling-step fade-in">
+                        <i class="fas fa-database"></i>
+                        <h4>Data Collection</h4>
+                        <p>300 Responden</p>
+                        <p>150 Pertamina</p>
+                        <p>150 Shell</p>
+                    </div>
+                    
+                    <!-- Step 2 -->
+                    <div class="modeling-step fade-in">
+                        <i class="fas fa-filter"></i>
+                        <h4>Data Preprocessing</h4>
+                        <p>Data Cleaning</p>
+                        <p>Feature Engineering</p>
+                        <p>70/30 Split</p>
+                    </div>
+                    
+                    <!-- Step 3 -->
+                    <div class="modeling-step fade-in">
+                        <i class="fab fa-python"></i>
+                        <h4>Python Implementation</h4>
+                        <p>Scikit-learn</p>
+                        <p>Pandas & NumPy</p>
+                        <p>Jupyter Notebook</p>
+                    </div>
+                    
+                    <!-- Step 4 -->
+                    <div class="modeling-step fade-in">
+                        <i class="fas fa-project-diagram"></i>
+                        <h4>Dual Models</h4>
+                        <p>Model Pertamina</p>
+                        <p>Model Shell</p>
+                        <p>Random Forest</p>
+                    </div>
+                    
+                    <!-- Step 5 -->
+                    <div class="modeling-step fade-in">
+                        <i class="fas fa-cogs"></i>
+                        <h4>Hyperparameter Tuning</h4>
+                        <p>GridSearchCV</p>
+                        <p>5-Fold CV</p>
+                        <p>Optimal Parameters</p>
+                    </div>
                 </div>
             </div>
             
             <div class="grid-2 mt-40">
                 <div class="info-card fade-in">
-                    <h3><i class="fab fa-python"></i> Teknologi yang Digunakan</h3>
-                    <p><strong>Python</strong> dengan library:</p>
-                    <p>• Pandas (data manipulation)</p>
-                    <p>• NumPy (numerical computing)</p>
-                    <p>• Scikit-learn (machine learning)</p>
-                    <p>• Matplotlib & Seaborn (visualization)</p>
+                    <h3><i class="fas fa-tools"></i> Teknologi yang Digunakan</h3>
+                    <div class="tech-stack">
+                        <p><strong>Python 3.9+</strong> dengan library:</p>
+                        <p><i class="fab fa-python highlight"></i> Pandas - Data manipulation</p>
+                        <p><i class="fab fa-python highlight"></i> NumPy - Numerical computing</p>
+                        <p><i class="fab fa-python highlight"></i> Scikit-learn - Machine learning</p>
+                        <p><i class="fab fa-python highlight"></i> Matplotlib & Seaborn - Visualization</p>
+                    </div>
                 </div>
                 
                 <div class="info-card fade-in">
                     <h3><i class="fas fa-sitemap"></i> Arsitektur Model</h3>
-                    <p><strong>Model 1:</strong> Random Forest untuk data Pertamina</p>
-                    <p><strong>Model 2:</strong> Random Forest untuk data Shell</p>
-                    <p><strong>Training:</strong> 70% data</p>
-                    <p><strong>Testing:</strong> 30% data</p>
-                    <p><strong>Validation:</strong> 5-Fold Cross Validation</p>
+                    <div class="architecture">
+                        <p><strong>Dataset Split:</strong></p>
+                        <p>• Training Set: 70%</p>
+                        <p>• Testing Set: 30%</p>
+                        
+                        <p class="mt-20"><strong>Model Configuration:</strong></p>
+                        <p>• Algorithm: Random Forest Classifier</p>
+                        <p>• n_estimators: 100-500 trees</p>
+                        <p>• Validation: 5-Fold Cross Validation</p>
+                        <p>• Tuning: GridSearchCV</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1273,6 +1388,9 @@
             
             // Add fade-in animations to elements on slide 1
             animateSlideElements(0);
+            
+            // Initialize modeling flow animation
+            animateModelingFlow();
         });
         
         // Navigation functions
@@ -1289,6 +1407,9 @@
             
             // Handle slide-specific animations
             switch(slideIndex) {
+                case 6: // Modeling Process slide
+                    animateModelingFlow();
+                    break;
                 case 7: // Evaluation slide
                     setTimeout(animateMetrics, 500);
                     if (chart) {
@@ -1352,6 +1473,34 @@
                     element.style.animationDelay = `${index * 0.1}s`;
                 }, 100);
             });
+        }
+        
+        // Animate modeling flow steps
+        function animateModelingFlow() {
+            const steps = document.querySelectorAll('.modeling-step');
+            
+            steps.forEach((step, index) => {
+                // Reset animation
+                step.style.animation = 'none';
+                step.style.opacity = '0';
+                step.style.transform = 'translateY(20px)';
+                
+                // Apply animation with sequential delay
+                setTimeout(() => {
+                    step.style.animation = 'fadeIn 0.8s ease forwards';
+                    step.style.animationDelay = `${index * 0.2}s`;
+                }, 300);
+            });
+            
+            // Animate arrow connector
+            const arrow = document.querySelector('.arrow-connector');
+            if (arrow && window.innerWidth > 768) {
+                arrow.style.width = '0%';
+                setTimeout(() => {
+                    arrow.style.transition = 'width 1.5s ease';
+                    arrow.style.width = '100%';
+                }, 500);
+            }
         }
         
         // Setup chart for feature importance
