@@ -45,14 +45,6 @@
             overflow: hidden;
         }
         
-        /* Particle Background */
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-        }
-        
         /* Navigation */
         .nav-dots {
             position: fixed;
@@ -250,29 +242,47 @@
             transform: translateX(10px);
         }
         
-        /* Slide 4 - Methodology */
+        /* Slide 4 - Methodology - CRISP-DM */
         .crispdm-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 50px 0;
             position: relative;
-            margin: 50px auto;
+        }
+        
+        .crispdm-main {
+            position: relative;
             width: 100%;
+            max-width: 800px;
             height: 400px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         
-        .crispdm-circle {
-            position: relative;
-            width: 350px;
-            height: 350px;
+        .crispdm-center {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
             border-radius: 50%;
-            border: 2px dashed rgba(52, 152, 219, 0.3);
-            animation: rotate 20s linear infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .crispdm-center i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
         
         .crispdm-step {
@@ -292,16 +302,31 @@
             cursor: pointer;
             text-align: center;
             padding: 10px;
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .crispdm-step.active {
+            opacity: 1;
+            transform: scale(1);
         }
         
         .crispdm-step:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) !important;
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            z-index: 20;
         }
         
         .crispdm-step i {
             font-size: 2rem;
             margin-bottom: 10px;
+        }
+        
+        .crispdm-connector {
+            position: absolute;
+            background: rgba(52, 152, 219, 0.3);
+            height: 2px;
+            z-index: 1;
         }
         
         /* Slide 5 - Variables */
@@ -625,15 +650,21 @@
             }
             .nav-btn { width: 100%; justify-content: center; }
             .nav-dots { right: 15px; }
-            .crispdm-circle { 
-                width: 280px; 
-                height: 280px; 
+            .crispdm-main { 
+                height: 350px; 
+                transform: scale(0.9);
             }
             .crispdm-step {
                 width: 110px;
                 height: 110px;
+                font-size: 0.8rem;
+            }
+            .crispdm-center {
+                width: 90px;
+                height: 90px;
                 font-size: 0.9rem;
             }
+            .crispdm-center i { font-size: 1.8rem; }
             .timeline { padding-left: 10px; }
             .timeline-item { padding-left: 30px; }
             .thank-you h2 { font-size: 2.5rem; }
@@ -644,16 +675,22 @@
             h2 { font-size: 1.5rem; }
             .member { min-width: 150px; }
             .variable-grid { grid-template-columns: 1fr; }
-            .crispdm-circle { 
-                width: 250px; 
-                height: 250px; 
+            .crispdm-main { 
+                height: 300px;
+                transform: scale(0.8);
             }
             .crispdm-step {
                 width: 90px;
                 height: 90px;
-                font-size: 0.8rem;
+                font-size: 0.7rem;
                 padding: 5px;
             }
+            .crispdm-center {
+                width: 70px;
+                height: 70px;
+                font-size: 0.7rem;
+            }
+            .crispdm-center i { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -788,14 +825,20 @@
         </div>
     </section>
     
-    <!-- Slide 4: Methodology -->
+    <!-- Slide 4: Methodology - CRISP-DM (Tidak Berputar) -->
     <section class="container" id="slide4">
         <div class="slide-content">
             <h2>Metodologi Penelitian (CRISP-DM)</h2>
             
             <div class="crispdm-container">
-                <div class="crispdm-circle" id="crispdmCircle">
-                    <!-- CRISP-DM steps will be positioned by JavaScript -->
+                <div class="crispdm-main" id="crispdmMain">
+                    <!-- Center -->
+                    <div class="crispdm-center">
+                        <i class="fas fa-cogs"></i>
+                        <div>CRISP-DM</div>
+                    </div>
+                    
+                    <!-- Steps will be added by JavaScript -->
                 </div>
             </div>
             
@@ -1120,7 +1163,7 @@
                 <p>Program Studi Teknik Informatika - Fakultas Ilmu Komputer - Universitas Pamulang</p>
                 <p style="margin-top: 30px; font-size: 1.2rem;">
                     <i class="fas fa-envelope"></i> Kontak: 
-                    <span class="highlight">05TPLK003CK</span>
+                    <span class="highlight">proposal.skripsi@unpam.ac.id</span>
                 </p>
             </div>
         </div>
@@ -1132,6 +1175,7 @@
         const totalSlides = 10;
         const slides = document.querySelectorAll('.container');
         let chart = null;
+        let crispdmAnimationStarted = false;
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -1147,9 +1191,6 @@
             
             // Initialize first slide
             updateNavigation();
-            
-            // Setup CRISP-DM visualization
-            setupCrispDM();
             
             // Setup chart
             setupChart();
@@ -1167,14 +1208,22 @@
             slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
             updateNavigation();
             
-            // Animate metrics when on slide 7
-            if (currentSlide === 7) {
-                setTimeout(animateMetrics, 500);
-                if (chart) {
-                    chart.data.datasets[0].data = [0.35, 0.25, 0.15, 0.10, 0.15];
-                    chart.data.datasets[1].data = [0.25, 0.30, 0.20, 0.15, 0.10];
-                    chart.update();
-                }
+            // Handle slide-specific animations
+            switch(currentSlide) {
+                case 3: // CRISP-DM slide
+                    if (!crispdmAnimationStarted) {
+                        setTimeout(setupCrispDM, 300);
+                        crispdmAnimationStarted = true;
+                    }
+                    break;
+                case 7: // Evaluation slide
+                    setTimeout(animateMetrics, 500);
+                    if (chart) {
+                        chart.data.datasets[0].data = [0.35, 0.25, 0.15, 0.10, 0.15];
+                        chart.data.datasets[1].data = [0.25, 0.30, 0.20, 0.15, 0.10];
+                        chart.update();
+                    }
+                    break;
             }
         }
         
@@ -1210,48 +1259,103 @@
             document.getElementById('nextBtn').style.display = currentSlide === totalSlides - 1 ? 'none' : 'flex';
         }
         
-        // Setup CRISP-DM visualization
+        // Setup CRISP-DM visualization (TIDAK BERPUTAR)
         function setupCrispDM() {
-            const circle = document.getElementById('crispdmCircle');
+            const container = document.getElementById('crispdmMain');
+            
+            // Remove any existing steps except center
+            const existingSteps = container.querySelectorAll('.crispdm-step, .crispdm-connector');
+            existingSteps.forEach(step => {
+                if (!step.classList.contains('crispdm-center')) {
+                    step.remove();
+                }
+            });
+            
             const steps = [
-                { name: "Business<br>Understanding", icon: "fas fa-briefcase", color: "#3498DB" },
-                { name: "Data<br>Understanding", icon: "fas fa-database", color: "#2ECC71" },
-                { name: "Data<br>Preparation", icon: "fas fa-filter", color: "#E74C3C" },
-                { name: "Modeling", icon: "fas fa-project-diagram", color: "#9B59B6" },
-                { name: "Evaluation", icon: "fas fa-chart-bar", color: "#F39C12" },
-                { name: "Deployment", icon: "fas fa-rocket", color: "#1ABC9C" }
+                { 
+                    name: "Business<br>Understanding", 
+                    icon: "fas fa-briefcase", 
+                    color: "#3498DB",
+                    position: { x: -180, y: -60 }
+                },
+                { 
+                    name: "Data<br>Understanding", 
+                    icon: "fas fa-database", 
+                    color: "#2ECC71",
+                    position: { x: 180, y: -60 }
+                },
+                { 
+                    name: "Data<br>Preparation", 
+                    icon: "fas fa-filter", 
+                    color: "#E74C3C",
+                    position: { x: -180, y: 100 }
+                },
+                { 
+                    name: "Modeling", 
+                    icon: "fas fa-project-diagram", 
+                    color: "#9B59B6",
+                    position: { x: 180, y: 100 }
+                },
+                { 
+                    name: "Evaluation", 
+                    icon: "fas fa-chart-bar", 
+                    color: "#F39C12",
+                    position: { x: -220, y: 20 }
+                },
+                { 
+                    name: "Deployment", 
+                    icon: "fas fa-rocket", 
+                    color: "#1ABC9C",
+                    position: { x: 220, y: 20 }
+                }
             ];
             
-            // Clear circle
-            circle.innerHTML = '';
-            
-            // Position steps in a circle
-            const radius = 140;
-            const centerX = 175;
-            const centerY = 175;
-            
+            // Create connectors first (so they're behind)
             steps.forEach((step, index) => {
-                const angle = (index / steps.length) * 2 * Math.PI - Math.PI / 2;
-                const x = centerX + radius * Math.cos(angle) - 70;
-                const y = centerY + radius * Math.sin(angle) - 70;
+                const connector = document.createElement('div');
+                connector.className = 'crispdm-connector';
                 
+                // Position connector from center to step
+                const centerX = 400; // Approximate center of container
+                const centerY = 200;
+                const stepX = centerX + step.position.x;
+                const stepY = centerY + step.position.y;
+                
+                const length = Math.sqrt(Math.pow(step.position.x, 2) + Math.pow(step.position.y, 2));
+                const angle = Math.atan2(step.position.y, step.position.x) * (180 / Math.PI);
+                
+                connector.style.width = `${length}px`;
+                connector.style.left = `${centerX}px`;
+                connector.style.top = `${centerY}px`;
+                connector.style.transform = `rotate(${angle}deg)`;
+                connector.style.transformOrigin = '0 0';
+                
+                container.appendChild(connector);
+                
+                // Animate connector
+                setTimeout(() => {
+                    connector.style.width = `${length}px`;
+                }, index * 200);
+            });
+            
+            // Create steps
+            steps.forEach((step, index) => {
                 const stepEl = document.createElement('div');
                 stepEl.className = 'crispdm-step';
-                stepEl.style.left = `${x}px`;
-                stepEl.style.top = `${y}px`;
+                stepEl.style.left = `calc(50% + ${step.position.x}px)`;
+                stepEl.style.top = `calc(50% + ${step.position.y}px)`;
                 stepEl.style.background = `linear-gradient(135deg, ${step.color}, ${darkenColor(step.color, 20)})`;
                 stepEl.innerHTML = `
                     <i class="${step.icon}"></i>
                     <div style="font-size: 0.8rem; line-height: 1.2;">${step.name}</div>
                 `;
                 
-                circle.appendChild(stepEl);
+                container.appendChild(stepEl);
                 
-                // Add animation
+                // Animate step with delay
                 setTimeout(() => {
-                    stepEl.style.transform = 'scale(1)';
-                    stepEl.style.opacity = '1';
-                }, index * 200);
+                    stepEl.classList.add('active');
+                }, 500 + (index * 300));
             });
         }
         
@@ -1418,11 +1522,26 @@
         
         // Handle window resize
         window.addEventListener('resize', function() {
-            setupCrispDM();
+            if (currentSlide === 3 && crispdmAnimationStarted) {
+                setupCrispDM();
+            }
             if (chart) {
                 chart.resize();
             }
         });
+        
+        // Initial animation for trees in slide 6
+        setTimeout(() => {
+            const trees = document.querySelectorAll('.tree');
+            trees.forEach((tree, index) => {
+                setTimeout(() => {
+                    tree.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        tree.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 200);
+            });
+        }, 1000);
     </script>
 </body>
 </html>
