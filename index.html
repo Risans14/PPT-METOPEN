@@ -436,7 +436,7 @@
             background: rgba(46, 204, 113, 0.2);
         }
         
-        /* Process Modeling - VERSI RAPIH */
+        /* Process Modeling */
         .modeling-container {
             margin: 40px 0;
         }
@@ -656,7 +656,7 @@
             margin-bottom: 20px;
         }
         
-        /* Chart Container */
+        /* Chart Container - TAMBAHAN FIX */
         .chart-container {
             background: var(--card-bg);
             padding: 30px;
@@ -664,6 +664,14 @@
             border: 1px solid var(--card-border);
             margin: 40px auto;
             max-width: 800px;
+            min-height: 450px; /* Ditambahkan untuk memastikan chart terlihat */
+            position: relative;
+        }
+        
+        /* Chart canvas - TAMBAHAN FIX */
+        #importanceChart {
+            width: 100% !important;
+            height: 350px !important;
         }
         
         /* Responsive Design */
@@ -689,6 +697,10 @@
             
             .arrow-connector {
                 display: none;
+            }
+            
+            #importanceChart {
+                height: 300px !important;
             }
         }
         
@@ -757,6 +769,15 @@
             .thank-you h2 {
                 font-size: 2.5rem;
             }
+            
+            #importanceChart {
+                height: 250px !important;
+            }
+            
+            .chart-container {
+                min-height: 350px;
+                padding: 20px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -778,6 +799,15 @@
             
             .modeling-step i {
                 font-size: 2rem;
+            }
+            
+            #importanceChart {
+                height: 200px !important;
+            }
+            
+            .chart-container {
+                min-height: 300px;
+                padding: 15px;
             }
         }
         
@@ -809,6 +839,16 @@
         .mt-30 { margin-top: 30px; }
         .mt-40 { margin-top: 40px; }
         .hidden { display: none; }
+        
+        /* Loading State untuk Chart */
+        .chart-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
@@ -1111,7 +1151,7 @@
         </div>
     </section>
     
-    <!-- Slide 7: Modeling Process - VERSI RAPIH -->
+    <!-- Slide 7: Modeling Process -->
     <section class="container" id="slide7">
         <div class="slide-content">
             <h2>Proses Modeling</h2>
@@ -1242,6 +1282,7 @@
             </div>
             
             <div class="chart-container fade-in">
+                <div class="chart-loading" id="chartLoading">Memuat chart...</div>
                 <h3 class="text-center">Perbandingan Feature Importance</h3>
                 <p class="text-center mb-30">Analisis inti penelitian: Mengekstrak dan membandingkan nilai <span class="highlight">feature importance</span> dari kedua model untuk mengidentifikasi faktor dominan kepuasan pelanggan di masing-masing merek.</p>
                 <canvas id="importanceChart"></canvas>
@@ -1364,6 +1405,7 @@
         const totalSlides = 10;
         const slides = document.querySelectorAll('.container');
         let chart = null;
+        let resizeTimeout;
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -1391,6 +1433,17 @@
             
             // Initialize modeling flow animation
             animateModelingFlow();
+            
+            // Auto-animate trees in slide 6
+            setInterval(() => {
+                if (currentSlide === 5) {
+                    animateTrees();
+                }
+            }, 3000);
+            
+            // Event listeners for navigation buttons
+            document.getElementById('prevBtn').addEventListener('click', prevSlide);
+            document.getElementById('nextBtn').addEventListener('click', nextSlide);
         });
         
         // Navigation functions
@@ -1413,10 +1466,7 @@
                 case 7: // Evaluation slide
                     setTimeout(animateMetrics, 500);
                     if (chart) {
-                        // PERUBAHAN DI SINI: Hanya Kualitas Bahan Bakar yang berubah
-                        // Pertamina: Kualitas Bahan Bakar 25% (dari 35%), lainnya tetap
                         chart.data.datasets[0].data = [0.25, 0.25, 0.15, 0.10, 0.15];
-                        // Shell: Kualitas Bahan Bakar 35% (dari 25%), lainnya tetap
                         chart.data.datasets[1].data = [0.35, 0.30, 0.20, 0.15, 0.10];
                         chart.update();
                     }
@@ -1447,9 +1497,9 @@
                 }
             });
             
-            // Update progress bar
+            // Update progress bar - PERBAIKAN DI SINI
             const progress = ((currentSlide + 1) / totalSlides) * 100;
-            document.getElementById('progressBar').style.width = ${progress}%;
+            document.getElementById('progressBar').style.width = progress + '%';
             
             // Update buttons visibility
             const prevBtn = document.getElementById('prevBtn');
@@ -1470,10 +1520,10 @@
                 element.style.opacity = '0';
                 element.style.transform = 'translateY(20px)';
                 
-                // Apply animation with delay
+                // Apply animation with delay - PERBAIKAN DI SINI
                 setTimeout(() => {
                     element.style.animation = 'fadeIn 0.8s ease forwards';
-                    element.style.animationDelay = ${index * 0.1}s;
+                    element.style.animationDelay = (index * 0.1) + 's';
                 }, 100);
             });
         }
@@ -1488,10 +1538,10 @@
                 step.style.opacity = '0';
                 step.style.transform = 'translateY(20px)';
                 
-                // Apply animation with sequential delay
+                // Apply animation with sequential delay - PERBAIKAN DI SINI
                 setTimeout(() => {
                     step.style.animation = 'fadeIn 0.8s ease forwards';
-                    step.style.animationDelay = ${index * 0.2}s;
+                    step.style.animationDelay = (index * 0.2) + 's';
                 }, 300);
             });
             
@@ -1508,14 +1558,27 @@
         
         // Setup chart for feature importance
         function setupChart() {
-            const ctx = document.getElementById('importanceChart').getContext('2d');
+            const canvas = document.getElementById('importanceChart');
+            if (!canvas) {
+                console.error('Canvas element not found!');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            const loadingElement = document.getElementById('chartLoading');
+            
+            // Hide loading after chart is created
+            setTimeout(() => {
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                }
+            }, 500);
             
             const data = {
                 labels: ['Kualitas Bahan Bakar', 'Kualitas Layanan', 'Fasilitas', 'Persepsi Harga', 'Lokasi'],
                 datasets: [
                     {
                         label: 'Pertamina',
-                        // PERUBAHAN DI SINI: Hanya Kualitas Bahan Bakar 25%, lainnya sama
                         data: [0.25, 0.25, 0.15, 0.10, 0.15],
                         backgroundColor: 'rgba(52, 152, 219, 0.7)',
                         borderColor: 'rgba(52, 152, 219, 1)',
@@ -1523,7 +1586,6 @@
                     },
                     {
                         label: 'Shell',
-                        // PERUBAHAN DI SINI: Hanya Kualitas Bahan Bakar 35%, lainnya sama
                         data: [0.35, 0.30, 0.20, 0.15, 0.10],
                         backgroundColor: 'rgba(255, 204, 0, 0.7)',
                         borderColor: 'rgba(255, 204, 0, 1)',
@@ -1537,7 +1599,7 @@
                 data: data,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             labels: { 
@@ -1601,8 +1663,24 @@
                         clearInterval(timer);
                     }
                     element.textContent = current.toFixed(2);
-                    bar.style.width = ${(current / metric.target) * 100}%;
+                    bar.style.width = ((current / metric.target) * 100) + '%'; // PERBAIKAN DI SINI
                 }, 30);
+            });
+        }
+        
+        // Animate trees
+        function animateTrees() {
+            const trees = document.querySelectorAll('.tree-icon');
+            trees.forEach((tree, index) => {
+                setTimeout(() => {
+                    tree.style.transform = 'scale(1.2)';
+                    tree.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.5)';
+                    
+                    setTimeout(() => {
+                        tree.style.transform = 'scale(1)';
+                        tree.style.boxShadow = 'none';
+                    }, 300);
+                }, index * 200);
             });
         }
         
@@ -1650,40 +1728,15 @@
             }
         }
         
-        // Event listeners for navigation buttons
-        document.getElementById('prevBtn').addEventListener('click', prevSlide);
-        document.getElementById('nextBtn').addEventListener('click', nextSlide);
-        
-        // Handle window resize
+        // Handle window resize with debounce
         window.addEventListener('resize', function() {
-            if (chart) {
-                chart.resize();
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                if (chart) {
+                    chart.resize();
+                }
+            }, 250);
         });
-        
-        // Auto-animate trees in slide 6
-        function animateTrees() {
-            const trees = document.querySelectorAll('.tree-icon');
-            trees.forEach((tree, index) => {
-                setTimeout(() => {
-                    tree.style.transform = 'scale(1.2)';
-                    tree.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.5)';
-                    
-                    setTimeout(() => {
-                        tree.style.transform = 'scale(1)';
-                        tree.style.boxShadow = 'none';
-                    }, 300);
-                }, index * 200);
-            });
-        }
-        
-        // Start tree animation when slide 6 is active
-        setInterval(() => {
-            if (currentSlide === 5) {
-                animateTrees();
-            }
-        }, 3000);
     </script>
 </body>
 </html>
-
