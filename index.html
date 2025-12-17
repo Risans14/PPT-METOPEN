@@ -1413,8 +1413,11 @@
                 case 7: // Evaluation slide
                     setTimeout(animateMetrics, 500);
                     if (chart) {
-                        chart.data.datasets[0].data = [0.35, 0.25, 0.15, 0.10, 0.15];
-                        chart.data.datasets[1].data = [0.25, 0.30, 0.20, 0.15, 0.10];
+                        // PERUBAHAN DI SINI: Hanya Kualitas Bahan Bakar yang berubah
+                        // Pertamina: Kualitas Bahan Bakar 25% (dari 35%), lainnya tetap
+                        chart.data.datasets[0].data = [0.25, 0.25, 0.15, 0.10, 0.15];
+                        // Shell: Kualitas Bahan Bakar 35% (dari 25%), lainnya tetap
+                        chart.data.datasets[1].data = [0.35, 0.30, 0.20, 0.15, 0.10];
                         chart.update();
                     }
                     break;
@@ -1446,7 +1449,7 @@
             
             // Update progress bar
             const progress = ((currentSlide + 1) / totalSlides) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressBar').style.width = ${progress}%;
             
             // Update buttons visibility
             const prevBtn = document.getElementById('prevBtn');
@@ -1470,7 +1473,7 @@
                 // Apply animation with delay
                 setTimeout(() => {
                     element.style.animation = 'fadeIn 0.8s ease forwards';
-                    element.style.animationDelay = `${index * 0.1}s`;
+                    element.style.animationDelay = ${index * 0.1}s;
                 }, 100);
             });
         }
@@ -1488,7 +1491,7 @@
                 // Apply animation with sequential delay
                 setTimeout(() => {
                     step.style.animation = 'fadeIn 0.8s ease forwards';
-                    step.style.animationDelay = `${index * 0.2}s`;
+                    step.style.animationDelay = ${index * 0.2}s;
                 }, 300);
             });
             
@@ -1512,14 +1515,16 @@
                 datasets: [
                     {
                         label: 'Pertamina',
-                        data: [0, 0, 0, 0, 0],
+                        // PERUBAHAN DI SINI: Hanya Kualitas Bahan Bakar 25%, lainnya sama
+                        data: [0.25, 0.25, 0.15, 0.10, 0.15],
                         backgroundColor: 'rgba(52, 152, 219, 0.7)',
                         borderColor: 'rgba(52, 152, 219, 1)',
                         borderWidth: 2
                     },
                     {
                         label: 'Shell',
-                        data: [0, 0, 0, 0, 0],
+                        // PERUBAHAN DI SINI: Hanya Kualitas Bahan Bakar 35%, lainnya sama
+                        data: [0.35, 0.30, 0.20, 0.15, 0.10],
                         backgroundColor: 'rgba(255, 204, 0, 0.7)',
                         borderColor: 'rgba(255, 204, 0, 1)',
                         borderWidth: 2
@@ -1596,7 +1601,7 @@
                         clearInterval(timer);
                     }
                     element.textContent = current.toFixed(2);
-                    bar.style.width = `${(current / metric.target) * 100}%`;
+                    bar.style.width = ${(current / metric.target) * 100}%;
                 }, 30);
             });
         }
